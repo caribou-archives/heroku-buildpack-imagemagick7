@@ -9,13 +9,57 @@ echo "-----> Install ImageMagick"
 BUILD_DIR=$1
 CACHE_DIR=$2
 VENDOR_DIR="$BUILD_DIR/vendor"
-mkdir -p $VENDOR_DIR
-INSTALL_DIR="$VENDOR_DIR/imagemagick"
-mkdir -p $INSTALL_DIR
-IMAGE_MAGICK_VERSION='7.0.8-56'
-CACHE_FILE="$CACHE_DIR/imagemagick-$IMAGE_MAGICK_VERSION-v1.tar.gz"
 
-if [ ! -f $CACHE_FILE ]; then
+# Set LDFLAGS to where we install all the libraries.
+export CPPFLAGS="-I$VENDOR_DIR/include"
+export LDFLAGS="-L$VENDOR_DIR/lib"
+ 
+
+mkdir -p $VENDOR_DIR
+
+LIBDE265_INSTALL_DIR="$VENDOR_DIR"
+mkdir -p $LIBDE265_INSTALL_DIR
+
+LIBDE265_VERSION='1.0.3'
+LIBDE265_CACHE_FILE="$CACHE_DIR/libde265-$LIBDE265_VERSION-v1.tar.gz"
+
+
+LIBDE265_FILE="libde265-$LIBDE265_VERSION.tar.gz"
+LIBDE265_DIR="libde265-$LIBDE265_VERSION"
+LIBDE265_URL="https://storage.googleapis.com/motorefi-buildpack-assets/$LIBDE265_FILE"
+
+wget $LIBDE265_URL -P $BUILD_DIR | indent
+tar xvf $BUILD_DIR/$LIBDE265_FILE | indent
+
+cd $LIBDE265_DIR
+./configure --disable-dec265 --disable-sherlock265 --prefix=$LIBDE265_INSTALL_DIR
+make -j 4 && make install
+
+
+LIBHEIF_INSTAL_DIR="$VENDOR_DIR"
+mkdir -p $LIBHEIF_INSTALL_DIR
+
+LIBHEIF_VERSION='1.6.0'
+LIBHEIF_CACHE_FILE="$CACHE_DIR/libheif-$LIBHEIF_VERSION-v1.tar.gz"
+
+LIBHEIF_FILE="libheif-$LIBHEIF_VERSION.tar.gz"
+LIBHEIF_DIR="libheif-$LIBHEIF_VERSION"
+LIBHEIF_URL="https://storage.googleapis.com/motorefi-buildpack-assets/$LIBHEIF_FILE"
+
+wget $LIBHEIF_URL -P $BUILD_DIR | indent
+tar xvf $BUILD_DIR/$LIBHEIF_FILE | indent
+cd $LIBHEIF_DIR
+./configure --prefix=$LIBHEIF_INSTALL_DIR 
+make -j 4 && make install
+
+
+IMAGE_MAGICK_INSTALL_DIR="$VENDOR_DIR"
+mkdir -p $IMAGE_MAGICK_INSTALL_DIR
+
+IMAGE_MAGICK_VERSION='7.0.8-56'
+IMAGE_MAGICK_CACHE_FILE="$CACHE_DIR/imagemagick-$IMAGE_MAGICK_VERSION-with-heic.tar.gz"
+
+if [ ! -f $IMAGE_MAGICK_CACHE_FILE ]; then
   # install imagemagick
   IMAGE_MAGICK_FILE="ImageMagick-$IMAGE_MAGICK_VERSION.tar.xz"
   IMAGE_MAGICK_DIR="ImageMagick-$IMAGE_MAGICK_VERSION"
@@ -34,12 +78,10 @@ if [ ! -f $CACHE_FILE ]; then
 
   echo "-----> Building ImageMagick"
   cd $IMAGE_MAGICK_DIR
-  export CPPFLAGS="-I$INSTALL_DIR/include"
-  export LDFLAGS="-L$INSTALL_DIR/lib"
-  ./configure --prefix=$INSTALL_DIR  --without-openexr \
+ ./configure --prefix=$IMAGE_MAGICK_INSTALL_DIR  --without-openexr \
 	  --with-wmf=no --without-djvu --without-gvc \
 	  --without-autotrace --without-magick-plus-plus \
-	  --without-lcms
+	  --without-lcms --with-heic=yes
   make -j 4 && make install
   cd ..
   rm -rf $IMAGE_MAGICK_DIR
@@ -53,8 +95,8 @@ if [ ! -f $CACHE_FILE ]; then
 
 else
   # cache exists, extract it
-  echo "-----> Extracting ImageMagick $CACHE_FILE => $VENDOR_DIR"
-  tar xzf $CACHE_FILE -C $VENDOR_DIR
+  echo "-----> Extracting ImageMagick $IMAGE_MAGICK_CACHE_FILE => $VENDOR_DIR"
+  tar xzf $IMAGE_MAGICK_CACHE_FILE -C $VENDOR_DIR
 fi
 
 echo "-----> Writing policy file"
@@ -71,7 +113,7 @@ EOF
 # update PATH and LD_LIBRARY_PATH
 echo "-----> Updating environment variables"
 PROFILE_PATH="$BUILD_DIR/.profile.d/imagemagick.sh"
-ACTUAL_INSTALL_PATH="$HOME/vendor/imagemagick"
+ACTUAL_INSTALL_PATH="$HOME/vendor"
 mkdir -p $(dirname $PROFILE_PATH)
 echo "export PATH=$ACTUAL_INSTALL_PATH/bin:\$PATH" >> $PROFILE_PATH
 echo "export LD_LIBRARY_PATH=$ACTUAL_INSTALL_PATH/lib:/lib:/usr/lib:/usr/local/lib:\$LD_LIBRARY_PATH" >> $PROFILE_PATH
