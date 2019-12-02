@@ -89,9 +89,8 @@ if [ ! -f $IMAGE_MAGICK_CACHE_FILE ]; then
   # cache for future deploys
   echo "-----> Caching ImageMagick installation"
   cd $VENDOR_DIR
-  REL_INSTALL_DIR="imagemagick"
-  tar czf $REL_INSTALL_DIR.tar.gz $REL_INSTALL_DIR
-  mv $REL_INSTALL_DIR.tar.gz $CACHE_FILE
+  tar czf imagemagick.tar.gz *
+  mv imagemagick.tar.gz $CACHE_FILE
 
 else
   # cache exists, extract it
