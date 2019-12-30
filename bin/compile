@@ -85,6 +85,17 @@ if [ ! -f $CACHE_FILE ]; then
   cd $VENDOR_DIR
   rm -rf $IMAGE_MAGICK_DIR
 
+  echo "-----> Writing policy file"
+  mkdir -p "$IMAGE_MAGICK_INSTALL_DIR/etc/ImageMagick-7"
+  cat > $IMAGE_MAGICK_INSTALL_DIR/etc/ImageMagick-7/policy.xml <<EOF
+  <policymap>
+    <policy domain="coder" rights="none" pattern="EPHEMERAL" />
+    <policy domain="coder" rights="none" pattern="HTTPS" />
+    <policy domain="coder" rights="none" pattern="MVG" />
+    <policy domain="coder" rights="none" pattern="MSL" />
+  </policymap>
+EOF
+
   echo "-----> Caching ImageMagick installation"
   tar czf imagemagick.tar.gz *
   mv imagemagick.tar.gz $CACHE_FILE
@@ -96,19 +107,6 @@ else
   tar -xzf $CACHE_FILE -C $VENDOR_DIR
 fi
 
-echo "-----> Writing policy file"
-mkdir -p "$IMAGE_MAGICK_INSTALL_DIR/etc/ImageMagick-7"
-cat > $IMAGE_MAGICK_INSTALL_DIR/etc/ImageMagick-7/policy.xml <<EOF
-<policymap>
-  <policy domain="coder" rights="none" pattern="EPHEMERAL" />
-  <policy domain="coder" rights="none" pattern="HTTPS" />
-  <policy domain="coder" rights="none" pattern="MVG" />
-  <policy domain="coder" rights="none" pattern="MSL" />
-</policymap>
-EOF
-
-ls $IMAGE_MAGICK_INSTALL_DIR
-ls $IMAGE_MAGICK_INSTALL_DIR/etc/
 # update PATH and LD_LIBRARY_PATH
 echo "-----> Updating environment variables"
 PROFILE_PATH="$BUILD_DIR/.profile.d/imagemagick.sh"
