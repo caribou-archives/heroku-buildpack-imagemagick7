@@ -40,7 +40,7 @@ if [ -f $CACHE_FILE ]; then
 
   cd $LIBDE265_DIR
   ./configure --disable-dec265 --disable-sherlock265 --prefix=$LIBDE265_INSTALL_DIR
-  make -j 4 && make install
+  make -j 4 --quiet && make install
   cd $VENDOR_DIR
   rm -rf $LIBDE265_DIR
 
@@ -57,7 +57,7 @@ if [ -f $CACHE_FILE ]; then
   tar xvf $BUILD_DIR/$LIBHEIF_FILE | indent
   cd $LIBHEIF_DIR
   ./configure --prefix=$LIBHEIF_INSTALL_DIR 
-  make -j 4 && make install
+  make -j 4 --quiet  && make install
   cd $VENDOR_DIR
   rm -rf $LIBHEIF_DIR
 
@@ -83,7 +83,7 @@ if [ -f $CACHE_FILE ]; then
 	  --with-wmf=no --without-djvu --without-gvc \
 	  --without-autotrace --without-magick-plus-plus \
 	  --without-lcms --with-heic=yes
-  make -j 4 && make install && make clean
+  make -j 4 --quiet && make install && make clean
   cd $VENDOR_DIR
   rm -rf $IMAGE_MAGICK_DIR
   ls -la $VENDOR_DIR
@@ -101,8 +101,8 @@ else
 fi
 
 echo "-----> Writing policy file"
-mkdir -p $IMAGE_MAGICK_INSTALL_DIR/etc/ImageMagick
-cat > $IMAGE_MAGICK_INSTALL_DIR/policy.xml <<EOF
+mkdir -p "$IMAGE_MAGICK_INSTALL_DIR/etc/ImageMagick-7"
+cat > $IMAGE_MAGICK_INSTALL_DIR/etc/ImageMagick-7/policy.xml <<EOF
 <policymap>
   <policy domain="coder" rights="none" pattern="EPHEMERAL" />
   <policy domain="coder" rights="none" pattern="HTTPS" />
@@ -111,12 +111,13 @@ cat > $IMAGE_MAGICK_INSTALL_DIR/policy.xml <<EOF
 </policymap>
 EOF
 
+ls $IMAGE_MAGICK_INSTALL_DIR
+ls $IMAGE_MAGICK_INSTALL_DIR/etc/
 # update PATH and LD_LIBRARY_PATH
 echo "-----> Updating environment variables"
 PROFILE_PATH="$BUILD_DIR/.profile.d/imagemagick.sh"
-ACTUAL_INSTALL_PATH="$HOME/vendor"
+ACTUAL_INSTALL_PATH="$IMAGE_MAGICK_INSTALL_DIR"
 mkdir -p $(dirname $PROFILE_PATH)
-ls $ACTUAL_INSTALL_PATH/etc/
 echo "export PATH=$ACTUAL_INSTALL_PATH/bin:\$PATH" >> $PROFILE_PATH
 echo "export LD_LIBRARY_PATH=$ACTUAL_INSTALL_PATH/lib:/lib:/usr/lib:/usr/local/lib:\$LD_LIBRARY_PATH" >> $PROFILE_PATH
 echo "export MAGICK_CONFIGURE_PATH=$ACTUAL_INSTALL_PATH/etc/ImageMagick-7/" >> $PROFILE_PATH
