@@ -24,7 +24,7 @@ CACHE_FILE="$CACHE_DIR/imagemagick-$IMAGE_MAGICK_VERSION-with-heic.tar.gz"
 
 mkdir -p $VENDOR_DIR
 
-if [ -f $CACHE_FILE ]; then
+if [ ! -f $CACHE_FILE ]; then
 
   LIBDE265_INSTALL_DIR="$VENDOR_DIR"
   mkdir -p $LIBDE265_INSTALL_DIR
@@ -61,7 +61,7 @@ if [ -f $CACHE_FILE ]; then
   cd $VENDOR_DIR
   rm -rf $LIBHEIF_DIR
 
- mkdir -p $IMAGE_MAGICK_INSTALL_DIR
+  mkdir -p $IMAGE_MAGICK_INSTALL_DIR
 
   # install imagemagick
   echo "-----> Downloading ImageMagick from $IMAGE_MAGICK_URL"
@@ -74,8 +74,6 @@ if [ -f $CACHE_FILE ]; then
     exit 1;
   fi
   tar xvf $BUILD_DIR/$IMAGE_MAGICK_FILE | indent
-  ls -la $VENDOR_DIR
-
 
   echo "-----> Building ImageMagick"
   cd $IMAGE_MAGICK_DIR
@@ -86,18 +84,16 @@ if [ -f $CACHE_FILE ]; then
   make -j 4 --silent && make install && make clean
   cd $VENDOR_DIR
   rm -rf $IMAGE_MAGICK_DIR
-  ls -la $VENDOR_DIR
 
-  # cache for future deploys
   echo "-----> Caching ImageMagick installation"
   tar czf imagemagick.tar.gz *
   mv imagemagick.tar.gz $CACHE_FILE
-  ls -la $VENDOR_DIR
 
 else
-  # cache exists, extract it
+  echo "-----> Cached files from $CACHE_FILE"
+  tar -tvf $CACHE_FILE
   echo "-----> Extracting ImageMagick $CACHE_FILE => $VENDOR_DIR"
-  tar xzf $CACHE_FILE -C $VENDOR_DIR
+  tar -xzf $CACHE_FILE -C $VENDOR_DIR
 fi
 
 echo "-----> Writing policy file"
