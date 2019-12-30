@@ -60,7 +60,6 @@ if [ ! -f $CACHE_FILE ]; then
   cd $VENDOR_DIR
   rm -rf $LIBHEIF_DIR
 
-
   IMAGE_MAGICK_INSTALL_DIR="$VENDOR_DIR"
   mkdir -p $IMAGE_MAGICK_INSTALL_DIR
 
@@ -75,6 +74,8 @@ if [ ! -f $CACHE_FILE ]; then
     exit 1;
   fi
   tar xvf $BUILD_DIR/$IMAGE_MAGICK_FILE | indent
+  ls -la $VENDOR_DIR
+
 
   echo "-----> Building ImageMagick"
   cd $IMAGE_MAGICK_DIR
