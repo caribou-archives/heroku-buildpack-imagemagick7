@@ -24,7 +24,7 @@ CACHE_FILE="$CACHE_DIR/imagemagick-$IMAGE_MAGICK_VERSION-with-heic.tar.gz"
 
 mkdir -p $VENDOR_DIR
 
-if [ ! -f $CACHE_FILE ]; then
+if [ -f $CACHE_FILE ]; then
 
   LIBDE265_INSTALL_DIR="$VENDOR_DIR"
   mkdir -p $LIBDE265_INSTALL_DIR
