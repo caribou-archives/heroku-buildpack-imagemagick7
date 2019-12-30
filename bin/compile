@@ -40,7 +40,7 @@ if [ -f $CACHE_FILE ]; then
 
   cd $LIBDE265_DIR
   ./configure --disable-dec265 --disable-sherlock265 --prefix=$LIBDE265_INSTALL_DIR
-  make -j 4 --quiet && make install
+  make -j 4 --silent && make install
   cd $VENDOR_DIR
   rm -rf $LIBDE265_DIR
 
@@ -57,7 +57,7 @@ if [ -f $CACHE_FILE ]; then
   tar xvf $BUILD_DIR/$LIBHEIF_FILE | indent
   cd $LIBHEIF_DIR
   ./configure --prefix=$LIBHEIF_INSTALL_DIR 
-  make -j 4 --quiet  && make install
+  make -j 4 --silent  && make install
   cd $VENDOR_DIR
   rm -rf $LIBHEIF_DIR
 
@@ -83,7 +83,7 @@ if [ -f $CACHE_FILE ]; then
 	  --with-wmf=no --without-djvu --without-gvc \
 	  --without-autotrace --without-magick-plus-plus \
 	  --without-lcms --with-heic=yes
-  make -j 4 --quiet && make install && make clean
+  make -j 4 --silent && make install && make clean
   cd $VENDOR_DIR
   rm -rf $IMAGE_MAGICK_DIR
   ls -la $VENDOR_DIR
