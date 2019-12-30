@@ -40,7 +40,8 @@ if [ ! -f $CACHE_FILE ]; then
 
   cd $LIBDE265_DIR
   ./configure --disable-dec265 --disable-sherlock265 --prefix=$LIBDE265_INSTALL_DIR
-  make -j 4 --silent && make install
+  make -j 4 --silent && make install --silent
+
   cd $VENDOR_DIR
   rm -rf $LIBDE265_DIR
 
@@ -57,7 +58,7 @@ if [ ! -f $CACHE_FILE ]; then
   tar xvf $BUILD_DIR/$LIBHEIF_FILE | indent
   cd $LIBHEIF_DIR
   ./configure --prefix=$LIBHEIF_INSTALL_DIR 
-  make -j 4 --silent  && make install
+  make -j 4 --silent  && make install --silent
   cd $VENDOR_DIR
   rm -rf $LIBHEIF_DIR
 
@@ -81,19 +82,19 @@ if [ ! -f $CACHE_FILE ]; then
 	  --with-wmf=no --without-djvu --without-gvc \
 	  --without-autotrace --without-magick-plus-plus \
 	  --without-lcms --with-heic=yes
-  make -j 4 --silent && make install && make clean
+  make -j 4 --silent && make install --silent
   cd $VENDOR_DIR
   rm -rf $IMAGE_MAGICK_DIR
 
   echo "-----> Writing policy file"
   mkdir -p "$IMAGE_MAGICK_INSTALL_DIR/etc/ImageMagick-7"
   cat > $IMAGE_MAGICK_INSTALL_DIR/etc/ImageMagick-7/policy.xml <<EOF
-  <policymap>
-    <policy domain="coder" rights="none" pattern="EPHEMERAL" />
-    <policy domain="coder" rights="none" pattern="HTTPS" />
-    <policy domain="coder" rights="none" pattern="MVG" />
-    <policy domain="coder" rights="none" pattern="MSL" />
-  </policymap>
+<policymap>
+  <policy domain="coder" rights="none" pattern="EPHEMERAL" />
+  <policy domain="coder" rights="none" pattern="HTTPS" />
+  <policy domain="coder" rights="none" pattern="MVG" />
+  <policy domain="coder" rights="none" pattern="MSL" />
+</policymap>
 EOF
 
   echo "-----> Caching ImageMagick installation"
