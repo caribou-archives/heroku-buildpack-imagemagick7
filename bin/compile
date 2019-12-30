@@ -24,7 +24,7 @@ CACHE_FILE="$CACHE_DIR/imagemagick-$IMAGE_MAGICK_VERSION-with-heic.tar.gz"
 
 mkdir -p $VENDOR_DIR
 
-if [ -f $CACHE_FILE ]; then
+if [ ! -f $CACHE_FILE ]; then
 
   LIBDE265_INSTALL_DIR="$VENDOR_DIR"
   mkdir -p $LIBDE265_INSTALL_DIR
@@ -107,12 +107,13 @@ cat > $IMAGE_MAGICK_INSTALL_DIR/etc/ImageMagick-7/policy.xml <<EOF
 </policymap>
 EOF
 
+ls $IMAGE_MAGICK_INSTALL_DIR
+ls $IMAGE_MAGICK_INSTALL_DIR/etc/
 # update PATH and LD_LIBRARY_PATH
 echo "-----> Updating environment variables"
 PROFILE_PATH="$BUILD_DIR/.profile.d/imagemagick.sh"
-ACTUAL_INSTALL_PATH="$HOME/vendor/"
+ACTUAL_INSTALL_PATH="$IMAGE_MAGICK_INSTALL_DIR"
 mkdir -p $(dirname $PROFILE_PATH)
 echo "export PATH=$ACTUAL_INSTALL_PATH/bin:\$PATH" >> $PROFILE_PATH
 echo "export LD_LIBRARY_PATH=$ACTUAL_INSTALL_PATH/lib:/lib:/usr/lib:/usr/local/lib:\$LD_LIBRARY_PATH" >> $PROFILE_PATH
 echo "export MAGICK_CONFIGURE_PATH=$ACTUAL_INSTALL_PATH/etc/ImageMagick-7/" >> $PROFILE_PATH
-
