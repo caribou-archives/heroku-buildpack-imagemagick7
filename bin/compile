@@ -112,7 +112,7 @@ ls $IMAGE_MAGICK_INSTALL_DIR/etc/
 # update PATH and LD_LIBRARY_PATH
 echo "-----> Updating environment variables"
 PROFILE_PATH="$BUILD_DIR/.profile.d/imagemagick.sh"
-ACTUAL_INSTALL_PATH="$IMAGE_MAGICK_INSTALL_DIR"
+ACTUAL_INSTALL_PATH="/app/vendor/"
 mkdir -p $(dirname $PROFILE_PATH)
 echo "export PATH=$ACTUAL_INSTALL_PATH/bin:\$PATH" >> $PROFILE_PATH
 echo "export LD_LIBRARY_PATH=$ACTUAL_INSTALL_PATH/lib:/lib:/usr/lib:/usr/local/lib:\$LD_LIBRARY_PATH" >> $PROFILE_PATH
